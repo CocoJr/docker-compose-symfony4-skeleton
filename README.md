@@ -1,5 +1,5 @@
 *This package is created to simple run a Symfony4 web project, using webpack, react, redis, rabbitmq and mysql.*
-*You can found the symfony4 skeleton using webpack and complete react example at this url: [https://github.com/CocoJr/symfony4-react-webpack-skeleton]*
+*You can found the symfony4 skeleton using webpack and complete react example at this url: https://github.com/CocoJr/symfony4-react-webpack-skeleton*
 
 ### Package
 
