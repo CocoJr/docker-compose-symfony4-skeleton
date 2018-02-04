@@ -1,0 +1,64 @@
+version: '2.1'
+services:
+    db:
+        image: mysql:5.7
+        env_file: .env
+        volumes:
+            - "db_volume:/var/lib/mysql"
+        restart: always
+
+    redis:
+        image: redis:3.0
+        env_file: .env
+        volumes:
+            - "redis_volume:/data"
+        restart: always
+
+    rabbit:
+        image: rabbitmq:3-management
+        ports:
+            - "5672"
+            - "${RABBITMQ_WEB_PORT}:15672"
+        env_file: .env
+        volumes:
+            - "rabbitmq_volume:/var/lib/rabbitmq"
+        restart: always
+
+    engine:
+        build:
+            context: ./engine
+            args:
+                PHPREDIS_VERSION: ${PHPREDIS_VERSION}
+        env_file: .env
+        ports:
+          - "9091"
+        links:
+            - rabbit
+            - redis
+            - db
+        volumes:
+            - "./volumes/app:/home/docker"
+            - "./backend/default.template:/etc/nginx/conf.d/default.template:ro"
+        command: "php-fpm"
+        working_dir: "/home/docker"
+        restart: always
+
+    backend:
+        image: nginx
+        env_file: .env
+        ports:
+            - "${FRONT_PORT}:80"
+        links:
+            - engine
+        volumes_from:
+            - "engine"
+        restart: always
+        command: /bin/bash -c "export DOLLAR='$$' && envsubst < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
+volumes:
+    db_volume:
+        driver: local
+    redis_volume:
+        driver: local
+    rabbitmq_volume:
+        driver: local
