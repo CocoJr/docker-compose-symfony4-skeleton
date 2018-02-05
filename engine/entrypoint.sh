@@ -22,7 +22,7 @@ if [ "$ENV" == "dev" ]; then
     wget https://phar.phpunit.de/phpunit-6.1.phar
     chmod +x phpunit-6.1.phar
     mv phpunit-6.1.phar /usr/local/bin/phpunit
-    pecl install -f xdebug
+    pecl install -f xdebug-2.6.0beta1
     XDEBUG_PATH=`find / -name "xdebug.so"`
     echo "zend_extension=$XDEBUG_PATH" > /usr/local/etc/php/conf.d/ext-xdebug.ini
 else
